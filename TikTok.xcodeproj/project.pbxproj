@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		6A9D2F0B180B4A3E9B333E6B /* Pods_TikTok.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E04169B80D5FD522296D23 /* Pods_TikTok.framework */; };
 		7D4DFCB425DA747E00BFA608 /* PostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DFCB325DA747E00BFA608 /* PostModel.swift */; };
+		7D4DFCB725DC164C00BFA608 /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DFCB625DC164C00BFA608 /* CommentViewController.swift */; };
+		7D4DFCBA25DD2F4800BFA608 /* PostComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DFCB925DD2F4800BFA608 /* PostComment.swift */; };
+		7D4DFCBD25DD2FB000BFA608 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DFCBC25DD2FB000BFA608 /* User.swift */; };
+		7D4DFCC025DD754B00BFA608 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DFCBF25DD754B00BFA608 /* CommentTableViewCell.swift */; };
+		7D85386F25DE959000283199 /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 7D85386E25DE959000283199 /* video.mp4 */; };
 		7D858EE025D2DB85004A142D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D858EDF25D2DB85004A142D /* AppDelegate.swift */; };
 		7D858EE225D2DB85004A142D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D858EE125D2DB85004A142D /* SceneDelegate.swift */; };
 		7D858EE425D2DB85004A142D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D858EE325D2DB85004A142D /* HomeViewController.swift */; };
@@ -37,6 +42,11 @@
 		3DF540F84C12F46DA79F3DE6 /* Pods-TikTok.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TikTok.release.xcconfig"; path = "Target Support Files/Pods-TikTok/Pods-TikTok.release.xcconfig"; sourceTree = "<group>"; };
 		68E04169B80D5FD522296D23 /* Pods_TikTok.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TikTok.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D4DFCB325DA747E00BFA608 /* PostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostModel.swift; sourceTree = "<group>"; };
+		7D4DFCB625DC164C00BFA608 /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
+		7D4DFCB925DD2F4800BFA608 /* PostComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostComment.swift; sourceTree = "<group>"; };
+		7D4DFCBC25DD2FB000BFA608 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		7D4DFCBF25DD754B00BFA608 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
+		7D85386E25DE959000283199 /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video.mp4; sourceTree = "<group>"; };
 		7D858EDC25D2DB85004A142D /* TikTok.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikTok.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D858EDF25D2DB85004A142D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D858EE125D2DB85004A142D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -119,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				7D858FE325D44362004A142D /* Assets.xcassets */,
+				7D85386E25DE959000283199 /* video.mp4 */,
 				7D858F4C25D434D0004A142D /* GoogleService-Info.plist */,
 				7D858EDF25D2DB85004A142D /* AppDelegate.swift */,
 				7D858EE125D2DB85004A142D /* SceneDelegate.swift */,
@@ -149,6 +160,8 @@
 			isa = PBXGroup;
 			children = (
 				7D4DFCB325DA747E00BFA608 /* PostModel.swift */,
+				7D4DFCB925DD2F4800BFA608 /* PostComment.swift */,
+				7D4DFCBC25DD2FB000BFA608 /* User.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -179,6 +192,7 @@
 				7D858F1A25D4222F004A142D /* SignUpViewController.swift */,
 				7D858F1D25D42242004A142D /* SettingsViewController.swift */,
 				7D858F2225D422BE004A142D /* PostViewController.swift */,
+				7D4DFCB625DC164C00BFA608 /* CommentViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -207,6 +221,7 @@
 		7D858F2125D42284004A142D /* Others */ = {
 			isa = PBXGroup;
 			children = (
+				7D4DFCBF25DD754B00BFA608 /* CommentTableViewCell.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -282,6 +297,7 @@
 				7D858EEC25D2DB88004A142D /* LaunchScreen.storyboard in Resources */,
 				7D858FE425D44362004A142D /* Assets.xcassets in Resources */,
 				7D858F4D25D434D0004A142D /* GoogleService-Info.plist in Resources */,
+				7D85386F25DE959000283199 /* video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,8 +367,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D4DFCB725DC164C00BFA608 /* CommentViewController.swift in Sources */,
 				7D858F2325D422BE004A142D /* PostViewController.swift in Sources */,
 				7D858F2F25D4234A004A142D /* AuthenticationManager.swift in Sources */,
+				7D4DFCC025DD754B00BFA608 /* CommentTableViewCell.swift in Sources */,
 				7D858F2C25D42338004A142D /* DatabaseManager.swift in Sources */,
 				7D85915125D524EF004A142D /* TabBarViewController.swift in Sources */,
 				7D858F0425D420CC004A142D /* ExploreViewController.swift in Sources */,
@@ -360,10 +378,12 @@
 				7D858F1525D42219004A142D /* UserListViewController.swift in Sources */,
 				7D858F1E25D42242004A142D /* SettingsViewController.swift in Sources */,
 				7D858F3225D42360004A142D /* HapticsManager.swift in Sources */,
+				7D4DFCBD25DD2FB000BFA608 /* User.swift in Sources */,
 				7D85916A25D6C073004A142D /* Extension.swift in Sources */,
 				7D858F0825D420DC004A142D /* CameraViewController.swift in Sources */,
 				7D858F0B25D420F4004A142D /* NotificationViewController.swift in Sources */,
 				7D858F1B25D4222F004A142D /* SignUpViewController.swift in Sources */,
+				7D4DFCBA25DD2F4800BFA608 /* PostComment.swift in Sources */,
 				7D858EE425D2DB85004A142D /* HomeViewController.swift in Sources */,
 				7D4DFCB425DA747E00BFA608 /* PostModel.swift in Sources */,
 				7D858F1825D42222004A142D /* SignInViewController.swift in Sources */,

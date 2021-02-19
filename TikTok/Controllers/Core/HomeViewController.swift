@@ -12,8 +12,9 @@ class HomeViewController: UIViewController {
 
     //MARK: - vars
     
+    
      let horizontalScrollView: UIScrollView = {
-        
+    
        let scrollView = UIScrollView()
         scrollView.bounces = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -32,6 +33,17 @@ class HomeViewController: UIViewController {
         
     }()
     
+    let followingPage: UIPageViewController = {
+        let pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .vertical, options: [:])
+        return pageController
+    }()
+    
+    let forYouPage: UIPageViewController = {
+        
+        let pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .vertical, options: [:])
+        return pageController
+    }()
+    
     private var  forYouPosts = PostModel.mockModel()
     private var  follwingPosts = PostModel.mockModel()
 
@@ -48,6 +60,7 @@ class HomeViewController: UIViewController {
         setupFeed()
         horizontalScrollView.contentOffset = CGPoint(x: view.width, y: 0)
         setupHeaderButtons()
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -82,28 +95,32 @@ class HomeViewController: UIViewController {
     
     private func setupFollowingFeed() {
         
-        let pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .vertical, options: [:])
+        
         guard let model = follwingPosts.first else {return}
-        pageController.setViewControllers([PostViewController(model: model)], direction: .forward, animated: false, completion: nil)
+        let vc = PostViewController(model: model)
+        vc.delegate = self
+        followingPage.setViewControllers([vc], direction: .forward, animated: false, completion: nil)
        
-        horizontalScrollView.addSubview(pageController.view)
-        pageController.view.frame = CGRect(x: 0, y: 0, width: horizontalScrollView.width, height: horizontalScrollView.height)
-        pageController.dataSource = self
-        addChild(pageController)
-        pageController.didMove(toParent: self)
+        horizontalScrollView.addSubview(followingPage.view)
+        followingPage.view.frame = CGRect(x: 0, y: 0, width: horizontalScrollView.width, height: horizontalScrollView.height)
+        followingPage.dataSource = self
+        addChild(followingPage)
+        followingPage.didMove(toParent: self)
         
     }
     private func setupForYouFeed() {
         
-        let pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .vertical, options: [:])
+        
         guard let model = forYouPosts.first else {return}
-        pageController.setViewControllers([PostViewController(model: model)], direction: .forward, animated: false, completion: nil)
+        let vc = PostViewController(model: model)
+        vc.delegate = self
+        forYouPage.setViewControllers([vc], direction: .forward, animated: false, completion: nil)
        
-        horizontalScrollView.addSubview(pageController.view)
-        pageController.view.frame = CGRect(x: view.width, y: 0, width: horizontalScrollView.width, height: horizontalScrollView.height)
-        pageController.dataSource = self
-        addChild(pageController)
-        pageController.didMove(toParent: self)
+        horizontalScrollView.addSubview(forYouPage.view)
+        forYouPage.view.frame = CGRect(x: view.width, y: 0, width: horizontalScrollView.width, height: horizontalScrollView.height)
+        forYouPage.dataSource = self
+        addChild(forYouPage)
+        forYouPage.didMove(toParent: self)
         
     }
 
@@ -123,12 +140,14 @@ extension HomeViewController: UIPageViewControllerDataSource {
         else {return nil}
         
         if index == 0 {
+
             return nil
         }
         
         let priorIndex = index - 1
         let model = currentPost[priorIndex]
         let vc = PostViewController(model: model)
+        vc.delegate = self
         return vc
         
     }
@@ -148,6 +167,7 @@ extension HomeViewController: UIPageViewControllerDataSource {
         let nextIndex = index + 1
         let model = currentPost[nextIndex]
         let vc = PostViewController(model: model)
+        vc.delegate = self
         return vc
     }
     //computed Property for checking current view controller
@@ -181,3 +201,65 @@ extension HomeViewController: UIScrollViewDelegate {
         }
     }
 }
+
+extension HomeViewController: PostViewControllerDelegate {
+    
+    func postViewController(_ vc: PostViewController, didTapCommentButtonFor post: PostModel) {
+        
+        horizontalScrollView.isScrollEnabled = false
+        control.isEnabled = false
+        if horizontalScrollView.contentOffset.x == 0 {
+            
+            followingPage.dataSource = nil
+            
+        }
+        else {
+            
+            forYouPage.dataSource = nil
+        }
+        
+        let vc = CommentViewController(post: post)
+        vc.delegete = self
+        addChild(vc)
+        vc.didMove(toParent: self)
+        view.addSubview(vc.view)
+        let frame: CGRect = CGRect(x: 0, y: view.height, width: view.width, height: view.height * 0.76)
+        vc.view.frame = frame
+        UIView.animate(withDuration: 0.2) {
+            
+            vc.view.frame = CGRect(x: 0, y: self.view.height - frame.height, width: frame.width, height: frame.height)
+        }
+    }
+    
+    func postViewController(_ vc: PostViewController, didTapProfileButtonFor post: PostModel) {
+        let user = post.user
+        let vc = ProfileViewController(user: user)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension HomeViewController: CommentViewControllerDelegate {
+    func didTapCommentCloseButton(_ vc: CommentViewController) {
+        
+        let frame  =  vc.view.frame
+        UIView.animate(withDuration: 0.2) {
+            vc.view.frame = CGRect(x: 0, y: self.view.height, width: frame.width, height: frame.height)
+        } completion: { [weak self] done in
+            
+            if done {
+                
+                DispatchQueue.main.async {
+                    
+                    vc.view.removeFromSuperview()
+                    vc.removeFromParent()
+                    self?.horizontalScrollView.isScrollEnabled = true
+                    self?.control.isEnabled = true
+                    self?.followingPage.dataSource = self
+                    self?.forYouPage.dataSource = self
+                    
+                }
+            }
+        }
+    }
+}
+
