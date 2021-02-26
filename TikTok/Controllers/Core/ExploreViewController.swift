@@ -11,6 +11,8 @@ class ExploreViewController: UIViewController {
 
    //MARK: - Properties
     
+    var sections = [ExploreSection]()
+    
     let searchBar: UISearchBar = {
       let bar = UISearchBar()
         bar.placeholder = "Search Videos"
@@ -31,10 +33,16 @@ class ExploreViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
+        configureModel()
         setupSearchBar()
         setupCollectionView()
+        
     
     
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView?.frame = view.bounds
     }
     
     
@@ -56,6 +64,11 @@ class ExploreViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.addSubview(collectionView)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(ExploreBannerCollectionViewCell.self, forCellWithReuseIdentifier: ExploreBannerCollectionViewCell.identifier)
+        collectionView.register(ExplorePostsCollectionViewCell.self, forCellWithReuseIdentifier: ExplorePostsCollectionViewCell.identifier)
+        collectionView.register(ExploreHashTagCollectionViewCell.self, forCellWithReuseIdentifier: ExploreHashTagCollectionViewCell.identifier)
+        collectionView.register(ExploreUserCollectionViewCell.self, forCellWithReuseIdentifier: ExploreUserCollectionViewCell.identifier)
+
         collectionView.delegate = self
         collectionView.dataSource = self
         self.collectionView = collectionView
@@ -65,6 +78,153 @@ class ExploreViewController: UIViewController {
     
     private func layout(for section: Int) -> NSCollectionLayoutSection {
         
+        let sectionType = sections[section].type
+        
+        switch sectionType {
+        
+        case .banner:
+            
+            //item
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            
+            item.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 10)
+            // group
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.9), heightDimension: .absolute(200)), subitems: [item])
+            //section
+            let sectionLayout = NSCollectionLayoutSection(group: group)
+            sectionLayout.orthogonalScrollingBehavior = .groupPaging
+            // return
+            return sectionLayout
+            
+        case .trendingPosts, .recommended, .new:
+            
+            //item
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            
+            item.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 10)
+            // group
+            let verticalgroup = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(100), heightDimension: .absolute(300)), subitem: item , count: 2)
+            
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(100), heightDimension: .absolute(300)), subitems: [verticalgroup])
+            //section
+            let sectionLayout = NSCollectionLayoutSection(group: group)
+            sectionLayout.orthogonalScrollingBehavior = .groupPaging
+            // return
+            return sectionLayout
+            
+        case .user:
+            
+            //item
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            
+            item.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 10)
+            // group
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(200)), subitems: [item])
+            //section
+            let sectionLayout = NSCollectionLayoutSection(group: group)
+            sectionLayout.orthogonalScrollingBehavior = .groupPaging
+            // return
+            return sectionLayout
+            
+        case .trendingHashtags:
+            
+            //item
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            
+            item.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 10)
+            // group
+            let verticalgroup = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(60)), subitems: [item])
+            //section
+            let sectionLayout = NSCollectionLayoutSection(group: verticalgroup)
+            // return
+            return sectionLayout
+            
+        case .popular:
+            
+            //item
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
+            
+            item.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 10)
+            // group
+            let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(110), heightDimension: .absolute(200)), subitems: [item])
+            
+            //section
+            let sectionLayout = NSCollectionLayoutSection(group: group)
+            sectionLayout.orthogonalScrollingBehavior = .continuous
+            // return
+            return sectionLayout
+            
+        
+            
+        }
+       
+    }
+    
+    func configureModel() {
+       
+        sections.append(
+            
+            ExploreSection(type: .banner, cells: ExploreManager.shared.getExploreBanner().compactMap({
+                
+                return ExploreCells.banner(viewModel: $0)
+            }))
+        )
+        
+        //trending posts
+        
+       
+        sections.append(
+                
+            ExploreSection(type: .trendingPosts, cells: ExploreManager.shared.getExplorePosts().compactMap(
+                            {
+                                ExploreCells.post(viewModel: $0)
+                            }))
+        )
+        
+        //users
+       
+        sections.append(
+            
+            ExploreSection(type: .user, cells: ExploreManager.shared.getExploreUser().compactMap({
+                
+                ExploreCells.user(viewModel: $0)
+            }))
+        
+        )
+        
+        
+        //trending Hashtags
+        sections.append(
+            
+            ExploreSection(type: .trendingHashtags, cells: ExploreManager.shared.getExploreHashTag().compactMap({
+                
+                ExploreCells.hashtag(viewModel: $0)
+            }))
+        
+        )
+        
+       
+        
+        //recommended
+        sections.append(
+                
+            ExploreSection(type: .recommended, cells: ExploreManager.shared.getExplorePosts().compactMap(
+                            {
+                                ExploreCells.post(viewModel: $0)
+                            }))
+        )
+        //popular
+        
+        
+        
+        //new
+        sections.append(
+                
+            ExploreSection(type: .new, cells: ExploreManager.shared.getExplorePosts().compactMap(
+                            {
+                                ExploreCells.post(viewModel: $0)
+                            }))
+        )
     }
 }
 
@@ -73,19 +233,52 @@ class ExploreViewController: UIViewController {
 
 extension ExploreViewController: UISearchBarDelegate {
     
-    
-    
 }
 
 extension ExploreViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return sections.count
+    }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        0
+        return sections[section].cells.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = .red
-        return cell
+        let model = sections[indexPath.section].cells[indexPath.row]
+        
+        switch model {
+        
+        case .banner(let viewModel):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreBannerCollectionViewCell.identifier, for: indexPath) as? ExploreBannerCollectionViewCell
+            else {
+                return collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+            }
+            cell.configureCell(with: viewModel)
+            return cell
+        case .post(let viewModel):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExplorePostsCollectionViewCell.identifier, for: indexPath) as? ExplorePostsCollectionViewCell
+            else {
+                return collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+            }
+            cell.configureCell(with: viewModel)
+            return cell
+        case .hashtag(let viewModel):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreHashTagCollectionViewCell.identifier, for: indexPath) as? ExploreHashTagCollectionViewCell
+            else {
+                return collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+            }
+            cell.configureCell(with: viewModel)
+            return cell
+        case .user(let viewModel):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ExploreUserCollectionViewCell.identifier, for: indexPath) as? ExploreUserCollectionViewCell
+            else {
+                return collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+            }
+            cell.configureCell(with: viewModel)
+            return cell
+        }
+        
     }
     
     
